@@ -6,6 +6,6 @@ package com.example.stoycho.traveling.utils;
 
 public class Constants {
 
-    public final static String URL              = "http://192.168.56.1/api/hotels";
-    public final static String URL_FOR_IMAGE    = "http://192.168.56.1/storage/";
+    public final static String URL              = "http://192.168.0.102/api/hotels";
+    public final static String URL_FOR_IMAGE    = "http://192.168.0.102/storage/";
 }

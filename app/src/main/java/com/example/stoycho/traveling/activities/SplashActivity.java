@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.stoycho.traveling.R;
+import com.example.stoycho.traveling.database.HotelsDatabase;
 import com.example.stoycho.traveling.models.Hotel;
 import com.example.stoycho.traveling.tasks.Request;
 import com.example.stoycho.traveling.utils.Constants;
@@ -81,18 +82,21 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
         if (locationGranted && timeExpired && loadHotels) {
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 
     private void loadHotels() {
-        final List<Hotel> hotels = new ArrayList<>();
+        List<Hotel> hotels = new ArrayList<>();
         String requestUrl = Constants.URL;
+        final HotelsDatabase database = new HotelsDatabase(SplashActivity.this);
         Request getDataFromUrl = new Request(requestUrl) {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 if (s != null) {
                     try {
+                        List<Hotel> hotels = new ArrayList<>();
                         JSONObject object = new JSONObject(s);
                         JSONArray hotelsJson = object.getJSONArray("data");
                         for (int i = 0; i < hotelsJson.length(); i++) {
@@ -133,15 +137,17 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
                                 hotel.setmDistance(distance / 1000);
                             }
                             JSONArray imagesJson = hotelJson.getJSONArray("images");
-                            String[] images = new String[imagesJson.length()];
+                            List<String> images = new ArrayList<>();
                             for (int j = 0; j < imagesJson.length(); j++) {
                                 JSONObject image = imagesJson.getJSONObject(j);
-                                images[j] = image.getString("path");
+                                images.add(image.getString("path"));
                             }
                             hotel.setmImages(images);
                             hotels.add(hotel);
+                            database.insertIntoHotels(hotel);
                         }
                         Utils.setmHotels(hotels);
+
                         loadHotels = true;
                         startHomeScreen();
                     } catch (JSONException e) {
@@ -150,7 +156,33 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
                 }
             }
         };
-        getDataFromUrl.execute();
+        if(database.getCountOfHotels() == 0)
+            getDataFromUrl.execute();
+        else {
+            hotels = database.selectAllHotels();
+            for(Hotel hotel : hotels)
+            {
+                Location location = null;
+                if (mLastLocation != null)
+                    location = new Location(mLastLocation);
+                else {
+                    LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                    if (ActivityCompat.checkSelfPermission(SplashActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(SplashActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    mLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    location = new Location(LocationManager.GPS_PROVIDER);
+                }
+                location.setLatitude(hotel.getmLatitude());
+                location.setLongitude(hotel.getmLongitude());
+
+                double distance = mLastLocation.distanceTo(location);
+                hotel.setmDistance(distance / 1000);
+            }
+            Utils.setmHotels(hotels);
+            loadHotels = true;
+            startHomeScreen();
+        }
     }
 
     @Override
@@ -171,7 +203,7 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
         switch (requestCode) {
             case 0: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length == 2
+                if (grantResults.length == 4
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     locationGranted = true;
                     if (mGoogleApiClient == null) {

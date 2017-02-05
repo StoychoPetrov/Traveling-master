@@ -66,8 +66,8 @@ public class HotelsAdapter extends BaseAdapter {
         distanceTxt.setText(distance);
         nameTxt.setText(hotel.getmName());
 
-        if(hotel.getmImages().length > 0) {
-            String logo = Constants.URL_FOR_IMAGE + hotel.getmImages()[0];
+        if(hotel.getmImages().size() > 0) {
+            String logo = Constants.URL_FOR_IMAGE + hotel.getmImages().get(0);
             Drawable drawable = LoadImageTask.laodImage(mContext, "hotels", null, logo, new LoadImageTask.OnImageDownload() {
                 @Override
                 public void onDownload(String url, Drawable drawable) {

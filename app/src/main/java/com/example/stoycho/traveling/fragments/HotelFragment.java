@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.stoycho.traveling.R;
 import com.example.stoycho.traveling.adapters.ImageViewPagerAdapter;
+import com.example.stoycho.traveling.database.HotelsDatabase;
 import com.example.stoycho.traveling.models.Hotel;
 import com.example.stoycho.traveling.tasks.LoadImageTask;
 import com.example.stoycho.traveling.utils.Constants;
@@ -40,6 +41,7 @@ public class HotelFragment extends Fragment {
         initUI(root);
         loadInformation();
         // Inflate the layout for this fragment
+        new HotelsDatabase(getActivity()).selectAllHotels();
         return root;
     }
 
@@ -65,9 +67,9 @@ public class HotelFragment extends Fragment {
             final ImageViewPagerAdapter imageViewPagerAdapter = new ImageViewPagerAdapter(getActivity(),images,this,mViewPager);
             mViewPager.setAdapter(imageViewPagerAdapter);
 
-            for(int i = 0 ; i < hotel.getmImages().length; i++)
+            for(int i = 0 ; i < hotel.getmImages().size(); i++)
             {
-                String imageUrl = Constants.URL_FOR_IMAGE + hotel.getmImages()[i];
+                String imageUrl = Constants.URL_FOR_IMAGE + hotel.getmImages().get(i);
                 Drawable image = LoadImageTask.laodImage(getActivity(), "hotels", null, imageUrl, new LoadImageTask.OnImageDownload() {
                     @Override
                     public void onDownload(String url, Drawable drawable) {

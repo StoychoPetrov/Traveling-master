@@ -86,4 +86,10 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         else
             viewPager.setCurrentItem(0);
     }
+
+    @Override
+    public void onBackPressed()
+    {
+
+    }
 }

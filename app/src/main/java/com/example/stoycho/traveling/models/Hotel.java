@@ -3,37 +3,39 @@ package com.example.stoycho.traveling.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.List;
+
 /**
  * Created by Stoycho on 12/18/2016.
  */
 
 public class Hotel implements Parcelable{
 
-    private int         mId;
-    private String      mName;
-    private String      mDescription;
-    private String      mPhone;
-    private String      mEmail;
-    private String      mWebsite;
-    private String      mAdress;
-    private double      mLatitude;
-    private double      mLongitude;
-    private double      mDistance;
-    private String[]    mImages;
+    private int             mId;
+    private String          mName;
+    private String          mDescription;
+    private String          mPhone;
+    private String          mEmail;
+    private String          mWebsite;
+    private String          mAdress;
+    private double          mLatitude;
+    private double          mLongitude;
+    private double          mDistance;
+    private List<String>    mImages;
 
     public Hotel(){}
 
-    public Hotel(int mId, String mName, String mDescription, String mPhone, String mEmail, String mWebsite, String mAdress, double mLatitude, double mLongitude, String[] mImages) {
-        this.mId = mId;
-        this.mName = mName;
-        this.mDescription = mDescription;
-        this.mPhone = mPhone;
-        this.mEmail = mEmail;
-        this.mWebsite = mWebsite;
-        this.mAdress = mAdress;
-        this.mLatitude = mLatitude;
-        this.mLongitude = mLongitude;
-        this.mImages = mImages;
+    public Hotel(int mId, String mName, String mDescription, String mPhone, String mEmail, String mWebsite, String mAdress, double mLatitude, double mLongitude, List<String> mImages) {
+        this.mId            = mId;
+        this.mName          = mName;
+        this.mDescription   = mDescription;
+        this.mPhone         = mPhone;
+        this.mEmail         = mEmail;
+        this.mWebsite       = mWebsite;
+        this.mAdress        = mAdress;
+        this.mLatitude      = mLatitude;
+        this.mLongitude     = mLongitude;
+        this.mImages        = mImages;
     }
 
     public Hotel(Parcel in){
@@ -124,11 +126,11 @@ public class Hotel implements Parcelable{
         this.mLongitude = mLongitude;
     }
 
-    public String[] getmImages() {
+    public List<String> getmImages() {
         return mImages;
     }
 
-    public void setmImages(String[] mImages) {
+    public void setmImages(List<String> mImages) {
         this.mImages = mImages;
     }
 
